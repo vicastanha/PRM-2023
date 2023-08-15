@@ -23,7 +23,6 @@ function TopicCardSkeleton() {
                 <Skeleton width={60} />
             </Box>
 
-
         </div>
 
     )
