@@ -44,8 +44,6 @@ function HeaderProfile({ user }: HeaderProfileProps) {
 Entrou em <FormattedDate value={user.createdAt} month="long" year="numeric"/>
                         </IntlProvider>
 
-                        Entrou em {user.createdAt}
-
                     </Typography>
                 </Box>
             </Box>
