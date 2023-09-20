@@ -1,27 +1,27 @@
-import { User } from "src/entities/user.entity";
+import { Topic } from "src/entities/topic.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class UserService {
+export class TopicService {
 
     constructor(
-        @InjectRepository(User)
-        private readonly repository: Repository<User>
+        @InjectRepository(Topic)
+        private readonly repository: Repository<Topic>
     ) { }
 
-    findAll(): Promise<User[]> {
+    findAll(): Promise<Topic[]> {
         return this.repository.find();
     }
 
-    findById(id: number): Promise<User>{
+    findById(id: number): Promise<Topic>{
         return this.repository.findOneBy({id:id})
 
     }
 
-    create (user: User): Promise<User>{
-        return this.repository.save(user);
+    create (topic: Topic): Promise<Topic>{
+        return this.repository.save(topic);
     }
 
     async delete (id: number): Promise<void>{

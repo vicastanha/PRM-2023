@@ -8,8 +8,10 @@ export class User{
 
     @Column({nullable: false, length: 50})
     fullname: string;
+
     @Column({nullable: false, length: 50})
     username: string;
+    
     @Column({ length: 250})
     description: string;
 
