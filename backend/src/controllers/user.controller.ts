@@ -18,7 +18,8 @@ export class UserController {
         return this.service.findById(id);
     }
 
-    @Post(':id')
+
+    @Post()
     create(@Body() user: User): Promise<User> {
         return this.service.create(user)
     }
