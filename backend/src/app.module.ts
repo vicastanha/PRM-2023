@@ -10,6 +10,8 @@ import { User } from './entities/user.entity';
 import { TopicService } from './services/topic.service';
 import { TopicController } from './controllers/topic.controller';
 import { Topic } from './entities/topic.entity';
+import { AuthController } from './controllers/auth.controller';
+import { AuthService } from './services/auth.service';
 
 @Module({
   imports: [
@@ -25,7 +27,18 @@ import { Topic } from './entities/topic.entity';
     }),
     TypeOrmModule.forFeature([User,Topic])
   ],
-  controllers: [AppController, ProfileController, UserController, TopicController],
-  providers: [AppService, ProfileService, UserService, TopicService],
+  controllers: [
+    AppController, 
+    ProfileController, 
+    UserController, 
+    TopicController,
+    AuthController],
+  
+    providers: [
+      AppService, 
+      ProfileService, 
+      UserService, 
+      TopicService,
+      AuthService],
 })
 export class AppModule { }

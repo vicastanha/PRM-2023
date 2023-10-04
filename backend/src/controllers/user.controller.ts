@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Put, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { UserService } from "src/services/user.service";
 import { get } from "http";
 import { User } from "src/entities/user.entity";
+
 
 
 @Controller('users')
@@ -14,10 +15,22 @@ export class UserController {
     }
 
     @Get(':id')
-    findById(@Param('id', ParseIntPipe) id: number): Promise<User> {
-        return this.service.findById(id);
+   async findById(@Param('id', ParseIntPipe) id: number): Promise<User> {
+        const found = await this.service.findById(id);
+        if (!found) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+        return found;
     }
 
+    @Get(':username')
+    async findByUsername(@Param('username') username: string): Promise<User> {
+        const found = await this.service.findByUsername(username);
+        if (!found) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+        return found;
+    }
 
     @Post()
     create(@Body() user: User): Promise<User> {
@@ -26,9 +39,21 @@ export class UserController {
 
     @Delete(':id')
     @HttpCode(204)
-    delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.service.delete(id);
-    }
+   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        const found = await this.service.findById(id);
+        if (!found) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+        return this.service.delete(id);
 
+    }
+    @Put(':id')
+    async update(@Param('id', ParseIntPipe) id: number, @Body() user: User): Promise<User> {
+         const found = await this.service.findById(id);
+         if (!found) {
+         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+         }
+         return found;
+     }
 
 }

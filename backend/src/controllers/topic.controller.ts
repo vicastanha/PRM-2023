@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put} from "@nestjs/common";
 import { TopicService } from "src/services/topic.service";
 import { get } from "http";
 import { Topic } from "src/entities/topic.entity";
+import { PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Controller('topics')
@@ -23,11 +24,26 @@ export class TopicController {
         return this.service.create(topic)
     }
 
+
     @Delete(':id')
     @HttpCode(204)
-    delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.service.delete(id);
+   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        const found = await this.service.findById(id);
+        if (!found) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+        return this.service.delete(found.id);
+
     }
+    @Put(':id')
+    async update(@Param('id', ParseIntPipe) id: number, @Body() topic: Topic): Promise<Topic> {
+         const found = await this.service.findById(id);
+         if (!found) {
+         throw new HttpException('Topic not found', HttpStatus.NOT_FOUND);
+         }
+         return found;
+     }
+
 
 
 }
