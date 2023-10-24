@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
@@ -14,6 +15,8 @@ export class User{
     
     @Column({ length: 250})
     description: string;
+
+    @Exclude()
 
     @CreateDateColumn({name:'created_at'})
     createdAt: Date;

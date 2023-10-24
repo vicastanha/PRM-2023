@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put,UseGuards } from "@nestjs/common";
+import { Body, Controller, ClassSerializerInterceptor, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put,UseGuards, UseInterceptors } from "@nestjs/common";
 import { TopicService } from "src/services/topic.service";
 import { get } from "http";
 import { Topic } from "src/entities/topic.entity";
 import { PrimaryGeneratedColumn } from 'typeorm';
 import { AuthGuard } from "src/guards/auth.guard";
 
-
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('topics')
 export class TopicController {
     constructor(private readonly service: TopicService) { }
