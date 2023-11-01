@@ -34,9 +34,19 @@ function SignUpPage() {
         event.preventDefault();
 
         setLoading(true);
+        setMessageError('');
+        setMessageSuccess('');
 
         try {
             await register(userForm);
+            setUserForm({
+                fullname: '',
+                username: '',
+                password: '',
+                description: ''
+            })
+            setMessageSuccess('Usuário criado com sucesso.')
+
         } catch (e) {
             const error = e as Error;
             setMessageError(String(error.message));
@@ -54,27 +64,27 @@ function SignUpPage() {
                             Crie uma Conta
                         </Typography>
                         <Typography variant="subtitle1">
-                            Ainda não tem uma conta TOPIC? 
+                            Ainda não tem uma conta TOPIC?
                         </Typography>
 
                         <TextField label="Nome Completo"
                             required
                             fullWidth
-                            value={ userForm.fullname }
-                            onChange={event => setUserForm({...userForm, fullname: (event.target as HTMLInputElement).value})} />
+                            value={userForm.fullname}
+                            onChange={event => setUserForm({ ...userForm, fullname: (event.target as HTMLInputElement).value })} />
 
                         <TextField label="Usuário"
                             required
                             fullWidth
-                            value={ userForm.username }
-                            onChange={event => setUserForm({...userForm, username: (event.target as HTMLInputElement).value})} />
+                            value={userForm.username}
+                            onChange={event => setUserForm({ ...userForm, username: (event.target as HTMLInputElement).value })} />
 
                         <TextField label="Senha"
                             required
                             fullWidth
                             type="password"
-                            value={ userForm.password }
-                            onChange={event => setUserForm({...userForm, password: (event.target as HTMLInputElement).value})} />
+                            value={userForm.password}
+                            onChange={event => setUserForm({ ...userForm, password: (event.target as HTMLInputElement).value })} />
 
                         <LoadingButton type="submit"
                             variant="contained"
@@ -95,10 +105,10 @@ function SignUpPage() {
                         <Typography variant="subtitle1">
                             Já tem uma conta TOPIC?
                         </Typography>
-                        <Button 
+                        <Button
                             variant="outlined"
                             size="large"
-                            onClick={() => navigate('/signin') }>
+                            onClick={() => navigate('/signin')}>
                             Acessar Conta
                         </Button>
 
@@ -109,10 +119,10 @@ function SignUpPage() {
             <Snackbar
                 open={Boolean(messageError)}
                 autoHideDuration={6000}
-                anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
 
-                <Alert severity="error" 
-                    variant="filled" 
+                <Alert severity="error"
+                    variant="filled"
                     onClose={() => setMessageError('')}>
                     {messageError}
                 </Alert>
@@ -121,10 +131,10 @@ function SignUpPage() {
             <Snackbar
                 open={Boolean(messageSuccess)}
                 autoHideDuration={6000}
-                anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
 
-                <Alert severity="success" 
-                    variant="filled" 
+                <Alert severity="success"
+                    variant="filled"
                     onClose={() => setMessageSuccess('')}>
                     {messageSuccess}
                 </Alert>
@@ -132,3 +142,4 @@ function SignUpPage() {
         </Box>
     )
 }
+export default SignUpPage;

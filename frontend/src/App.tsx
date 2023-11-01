@@ -10,15 +10,13 @@ const {user} = useAuth();
 
   return (
     <div id='App'>
-    <Routes>
-        <Route path="/" element={ <TopicPage /> } />
-        <Route path="/signin" element={ <SignInPage /> } />
-        <Route path="/signup" element={ <SignUpPage /> } />
-      </Routes>
+
+{/* parametro ':' */}
 
       { user ? (
         <Routes>
           <Route path="/" element={ <TopicPage /> } />
+          <Route path="/:username" element={ <TopicPage /> } />
         </Routes>
       ) : (
         <Routes>
