@@ -1,22 +1,25 @@
+import { ITopic } from "../../@types";
 import TopicCardActions from "../TopicCardActions";
 import TopicCardBody from "../TopicCardBody";
 import TopicCardHeader from "../TopicCardHeader";
 
 type TopicCardProps = {
-    topic: any
+    topic: ITopic
 }
 
-function TopicCard ({
+function TopicCard({
     topic
-}: TopicCardProps){
-    return(
-<div id="topic-card">
-<TopicCardHeader/>
-<TopicCardBody/>
-<TopicCardActions/>
+}: TopicCardProps) {
+    return (
+        <div id="topic-card">
+            <TopicCardHeader 
+                createdAt={topic.createdAt}
+                owner={topic.owner}
+             />
 
-</div>
-)
+            <TopicCardBody content={topic.content} />
+            <TopicCardActions topic={topic} />
+        </div>
+    )
 }
-
 export default TopicCard;

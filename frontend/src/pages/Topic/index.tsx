@@ -1,90 +1,170 @@
-import { Snackbar, Alert, Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useAuth } from "../../hook/useAuth";
-import { getProfileByUsername } from "../../services";
+import { Alert, Box, Button, Fab, Snackbar, Tab, Tabs, TextField } from "@mui/material"
+import HeaderProfile from "../../components/HeaderProfile"
+import TopicList from "../../components/TopicList"
+import { SyntheticEvent, useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import { useAuth } from "../../hook/useAuth"
+import { getProfileByUsername, getTopicsByUsername } from "../../services"
+import { ITopic, IUser } from "../../@types"
+import AddIcon from '@mui/icons-material/Add';
+import { LoadingButton } from "@mui/lab"
 
 function TopicPage() {
 
-//Profile
+    //PROFILE
+    const { user } = useAuth();
+    const params = useParams();
+    const [profile, setProfile] = useState<IUser>({} as IUser);
 
-const {user} = useAuth();
-const params = useParams();
-const [profile, setProfile] = useState({});
+    //STATE
+    const [messageError, setMessageError] = useState('');
+    const [messageSuccess, setMessageSuccess] = useState('');
+    const [loading, setLoading] = useState(false);
 
-const [messageError, setMessageError] = useState('');
-    
-    useEffect(() =>{
 
-        const username = params.username ? params.username : user?. username;
+    //TOPICS
+    const [topics, setTopics] = useState([]);
+    const [profileTopics, setProfileTopics] = useState([]);
 
-        if (username){
-            getProfileByUsername(username)
-            .then(result => {
-                setProfile(result.data);
-            })
-            .catch(error => {
-                setMessageError(String(error.message))
-            })
-        }
-    
-    }, [])
-    
-    const topics = [
-        {
-            owner: { fullname: 'Pedro 1' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste nostrum facilis obcaecati voluptatibus quia aspernatur qui modi ducimus ipsum! Officiis ad mollitia saepe commodi distinctio nostrum autem, eos esse libero?',
-            coments: 1,
-            reposts: 1,
-            likes: 30,
-            createdAt: '2023-08-01 19:23:00'
-        }, {
-            owner: { fullname: 'Pedro 2' },
+    //TABS
+    const [tab, setTab] = useState(2);
+    function handleTabChange(event: SyntheticEvent, newValue: number) {
+        setTab(newValue)
+    }
+
+    //NEW TOPIC
+    const [showForm, setShowForm] = useState(false)
+    const [topicForm, setTopicForm] = useState<ITopic>({} as ITopic)
+    function handleShowForm() {
+        setShowForm(true);
+        setTopicForm({
             content: '',
-            coments: 1,
-            reposts: 1,
-            likes: 30,
-            createdAt: '2023-08-01 19:23:00'
-        }, {
-            owner: { fullname: 'Pedro 3' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste nostrum facilis obcaecati voluptatibus quia aspernatur qui modi ducimus ipsum! Officiis ad mollitia saepe commodi distinctio nostrum autem, eos esse libero?',
-            coments: 1,
-            reposts: 1,
-            likes: 30,
-            createdAt: '2023-08-01 19:23:00'
-        }, {
-            owner: { fullname: 'Pedro 4' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste nostrum facilis obcaecati voluptatibus quia aspernatur qui modi ducimus ipsum! Officiis ad mollitia saepe commodi distinctio nostrum autem, eos esse libero?',
-            coments: 1,
-            reposts: 1,
-            likes: 30,
-            createdAt: '2023-08-01 19:23:00'
-        }, {
-            owner: { fullname: 'Pedro 5' },
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste nostrum facilis obcaecati voluptatibus quia aspernatur qui modi ducimus ipsum! Officiis ad mollitia saepe commodi distinctio nostrum autem, eos esse libero?',
-            coments: 1,
-            reposts: 1,
-            likes: 30,
-            createdAt: '2023-08-01 19:23:00'
-        }
-    ]
+            owner: user
+        })
+    }
 
+    function handleCreateTopic() {
+        setLoading(true);
+
+        //TO-DO: Chama a service para enviar para a API
+    }
+
+    useEffect(() => {
+        const username = params.username ? params.username : user?.username;
+
+        if (username) {
+            getProfileByUsername(username)
+                .then(result => {
+                    setProfile(result.data);
+
+                    //Carregar topics do usuario (owner)
+                    return getTopicsByUsername(username)
+                        .then(result=> {
+                            setProfileTopics(result.data)
+                        })
+                })
+                .catch(error => {
+                    setMessageError(String(error.message))
+                })
+        }
+
+    }, [])
+
+    useEffect(() => {
+        if (tab == 1) {
+            getTopicsByUsername()
+                .then(result=> {
+                    setTopics(result.data)
+                })
+                .catch(error => {
+                    setMessageError(String(error.message))
+                })
+        }
+    }, [tab])
 
 
     return (
-        <Snackbar
-        open={Boolean(messageError)}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <Box id="topic-page" display="flex" flexDirection="column"
+             alignItems="center" gap={3}>
+            
+            <HeaderProfile user={profile} />
 
-        <Alert severity="error"
-            variant="filled"
-            onClose={() => setMessageError('')}>
-            {messageError}
-        </Alert>
-    </Snackbar>
+            <Box className="topic-page-content" style={{width: '64rem'}}>
+                
+                {profile.id == user?.id && (
+                    <Tabs value={tab} onChange={handleTabChange}>
+                        <Tab value={1} label="Tópicos" />
+                        <Tab value={2} label="Meus Tópicos" />
+                    </Tabs>
+                )}
+
+                {tab == 2 ? (
+                    <Box display="flex" flexDirection="column" alignItems="end">
+                        {!showForm && (
+                            <Fab color="primary" style={{marginTop: '-3.5rem'}}
+                                onClick={handleShowForm}>
+                                <AddIcon />
+                            </Fab>
+                        )}
+
+                        {showForm && (
+                            <Box display="flex" flexDirection="column" alignItems="end"
+                                gap={3} style={{marginTop: '2rem', width: '100%'}}>
+                                
+                                <TextField
+                                    label="Novo Tópico"
+                                    placeholder="No que você está pensando?"
+                                    multiline
+                                    fullWidth
+                                    required
+                                    autoFocus
+                                    rows={4}
+                                    disabled={loading}
+                                    inputProps={{maxLength: 250}}
+                                />
+
+                                <Box display="flex" flexDirection="row" gap={3}>
+                                    <Button
+                                        size="small"
+                                        disabled={loading}
+                                        onClick={() => setShowForm(false)}>
+                                        Cancelar
+                                    </Button>
+
+                                    <LoadingButton
+                                        variant="contained"
+                                        size="small"
+                                        loading={loading}
+                                        onClick={handleCreateTopic}>
+                                        Comentar
+                                    </LoadingButton>
+                                </Box>
+                            </Box>
+                        )}
+
+
+                        <TopicList items={profileTopics} />
+
+                    </Box>
+                ) : (
+                    <TopicList items={topics} />
+                )}
+            </Box>
+
+            <Snackbar
+                open={Boolean(messageError)}
+                autoHideDuration={6000}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+
+                <Alert severity="error" 
+                    variant="filled" 
+                    onClose={() => setMessageError('')}>
+                    {messageError}
+                </Alert>
+            </Snackbar>
+        </Box>
     )
 
 }
 
-export default TopicPage;
+export default TopicPage
