@@ -4,7 +4,7 @@ import TopicList from "../../components/TopicList"
 import { SyntheticEvent, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useAuth } from "../../hook/useAuth"
-import { getProfileByUsername, getTopicsByUsername } from "../../services"
+import { createTopic, getProfileByUsername, getTopicsByUsername } from "../../services"
 import { ITopic, IUser } from "../../@types"
 import AddIcon from '@mui/icons-material/Add';
 import { LoadingButton } from "@mui/lab"
@@ -23,8 +23,8 @@ function TopicPage() {
 
 
     //TOPICS
-    const [topics, setTopics] = useState([]);
-    const [profileTopics, setProfileTopics] = useState([]);
+    const [topics, setTopics] = useState<ITopic[]>([]);
+    const [profileTopics, setProfileTopics] = useState<ITopic[]>([]);
 
     //TABS
     const [tab, setTab] = useState(2);
@@ -46,7 +46,22 @@ function TopicPage() {
     function handleCreateTopic() {
         setLoading(true);
 
-        //TO-DO: Chama a service para enviar para a API
+        //Chama a service para enviar para a API
+        createTopic(topicForm)
+            .then(result => {
+                setProfileTopics([result.data, ...topics]);
+                setMessageSuccess('Tópico criado com sucesso!');
+                setTimeout(() => {
+                    setMessageSuccess('')
+                }, 5000)
+            })
+            .catch(error => {
+                setMessageError(error.message);
+            })
+            .finally(() => {
+                setShowForm(false);
+                setLoading(false);
+            })
     }
 
     useEffect(() => {
@@ -59,7 +74,7 @@ function TopicPage() {
 
                     //Carregar topics do usuario (owner)
                     return getTopicsByUsername(username)
-                        .then(result=> {
+                        .then(result => {
                             setProfileTopics(result.data)
                         })
                 })
@@ -73,7 +88,7 @@ function TopicPage() {
     useEffect(() => {
         if (tab == 1) {
             getTopicsByUsername()
-                .then(result=> {
+                .then(result => {
                     setTopics(result.data)
                 })
                 .catch(error => {
@@ -85,12 +100,12 @@ function TopicPage() {
 
     return (
         <Box id="topic-page" display="flex" flexDirection="column"
-             alignItems="center" gap={3}>
-            
+            alignItems="center" gap={3}>
+
             <HeaderProfile user={profile} />
 
-            <Box className="topic-page-content" style={{width: '64rem'}}>
-                
+            <Box className="topic-page-content" style={{ width: '64rem' }}>
+
                 {profile.id == user?.id && (
                     <Tabs value={tab} onChange={handleTabChange}>
                         <Tab value={1} label="Tópicos" />
@@ -101,7 +116,7 @@ function TopicPage() {
                 {tab == 2 ? (
                     <Box display="flex" flexDirection="column" alignItems="end">
                         {!showForm && (
-                            <Fab color="primary" style={{marginTop: '-3.5rem'}}
+                            <Fab color="primary" style={{ marginTop: '-3.5rem' }}
                                 onClick={handleShowForm}>
                                 <AddIcon />
                             </Fab>
@@ -109,8 +124,8 @@ function TopicPage() {
 
                         {showForm && (
                             <Box display="flex" flexDirection="column" alignItems="end"
-                                gap={3} style={{marginTop: '2rem', width: '100%'}}>
-                                
+                                gap={3} style={{ marginTop: '2rem', width: '100%' }}>
+
                                 <TextField
                                     label="Novo Tópico"
                                     placeholder="No que você está pensando?"
@@ -120,7 +135,9 @@ function TopicPage() {
                                     autoFocus
                                     rows={4}
                                     disabled={loading}
-                                    inputProps={{maxLength: 250}}
+                                    inputProps={{ maxLength: 250 }}
+                                    value={topicForm.content}
+                                    onChange={event => setTopicForm({ ...topicForm, content: (event.target as HTMLInputElement).value })}
                                 />
 
                                 <Box display="flex" flexDirection="row" gap={3}>
@@ -154,14 +171,26 @@ function TopicPage() {
             <Snackbar
                 open={Boolean(messageError)}
                 autoHideDuration={6000}
-                anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
 
-                <Alert severity="error" 
-                    variant="filled" 
+                <Alert severity="error"
+                    variant="filled"
                     onClose={() => setMessageError('')}>
                     {messageError}
                 </Alert>
             </Snackbar>
+
+            <Snackbar
+                open={Boolean(messageSuccess)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+
+                <Alert severity="success"
+                    variant="filled"
+                    onClose={() => setMessageSuccess('')}>
+                    {messageSuccess}
+                </Alert>
+            </Snackbar>
+
         </Box>
     )
 

@@ -1,9 +1,9 @@
 
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User } from './../entities/user.entity';
+import { User } from '../users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApplicationException } from 'src/exceptions';
+import { ApplicationException } from 'src/@exceptions';
 
 //@ = decorator/javascript/ts
 @Injectable()
