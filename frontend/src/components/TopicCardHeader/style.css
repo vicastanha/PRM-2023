@@ -1,13 +1,10 @@
-#topic-card-header{
+#topic-card-header {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
     align-items: center;
 }
-/* Comentário feito durante a aula: rem medida relativa a tela inteira  1 rem = 16 px
-em - em relação ao elemento pai, */
-
-#topic-card-header .card-header-text{
+#topic-card-header .card-header-text {
     display: flex;
     align-items: baseline;
     flex-direction: row;

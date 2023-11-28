@@ -47,7 +47,7 @@ function TopicComment({
                         gap={1}>
                         <Box display="flex" flexDirection="row"
                             gap={1} alignItems="baseline" flex="1 1 auto">
-
+                            
                             <Typography variant="body2">
                                 {comment.user?.fullname}
                             </Typography>

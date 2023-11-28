@@ -8,17 +8,15 @@ type TopicCardActionsProps = {
     commented: boolean,
     totalComments: number,
     clickComment: () => void,
-
 }
 function TopicCardActions({
-commented,
-totalComments,
-clickComment
+    commented,
+    totalComments,
+    clickComment
 }: TopicCardActionsProps) {
     return (
         <div id="topic-card-actions">
-{/* //validação para ver se existe comentário ou não */}
-<Button variant="text" size="small" 
+            <Button variant="text" size="small" 
                 startIcon={ commented ? <ChatBubble /> : <ChatBubbleOutline />}
                 onClick={clickComment}>
                 {totalComments}
@@ -34,4 +32,5 @@ clickComment
         </div>
     )
 }
+
 export default TopicCardActions;
