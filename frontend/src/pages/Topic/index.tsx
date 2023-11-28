@@ -43,6 +43,8 @@ function TopicPage() {
         })
     }
 
+    
+
     function handleCreateTopic() {
         setLoading(true);
 

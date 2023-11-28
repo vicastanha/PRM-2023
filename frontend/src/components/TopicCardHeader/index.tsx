@@ -1,4 +1,5 @@
 import {Avatar, Typography} from '@mui/material';
+
 import './style.css';
 import { IUser } from '../../@types';
 import { FormattedDate, IntlProvider } from 'react-intl';

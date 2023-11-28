@@ -15,3 +15,11 @@ export interface ITopic {
     owner?: IUser;
     createdAt?: Date;
 }
+export interface IComment { // NECESSÁRIO CRIAR UMA INTERFACE NA PROVA
+    id?: number;
+    content: string;
+    user?: IUser;
+    topic?: ITopic;
+    createdAt?: Date;
+
+}
