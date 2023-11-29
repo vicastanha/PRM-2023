@@ -8,6 +8,8 @@ import { TopicModule } from './topics/topic.module';
 import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profiles/profile.module';
 import { CommentModule } from './comments/comment.module';
+import { RepostModule } from './reposts/repost.module';
+import { LikeModule } from './likes/like.module';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { CommentModule } from './comments/comment.module';
   TopicModule,
   AuthModule,
   ProfileModule,
-  CommentModule
+  CommentModule,
+  RepostModule,
+  LikeModule,
   ],
   controllers: [],
   providers: [],

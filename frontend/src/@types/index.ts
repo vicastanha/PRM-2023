@@ -14,12 +14,20 @@ export interface ITopic {
     content: string;
     owner?: IUser;
     createdAt?: Date;
+    repost?: ITopic;
+    topic_id?: number; // interrogação indica que não é obrigatorio
 }
-export interface IComment { // NECESSÁRIO CRIAR UMA INTERFACE NA PROVA
+export interface IComment {
     id?: number;
     content: string;
     user?: IUser;
     topic?: ITopic;
     createdAt?: Date;
 
+}
+
+export interface ILike { 
+    id?: number;
+    user?: IUser;
+    topic?: ITopic;
 }

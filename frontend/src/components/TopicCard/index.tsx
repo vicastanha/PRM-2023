@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { IComment, ITopic } from "../../@types";
+import { IComment, ILike, ITopic, IUser } from "../../@types";
 import TopicCardActions from "../TopicCardActions";
 import TopicCardBody from "../TopicCardBody";
 import TopicCardHeader from "../TopicCardHeader";
 import { Alert, Snackbar } from "@mui/material";
 import TopicComment from "../TopicComment";
-import { createComment, getCommentsByTopic } from "../../services";
+import { createComment, createTopic, getCommentsByTopic, getLikesByTopic, getRepostsByTopic, getTopicById } from "../../services";
 import { useAuth } from "../../hook/useAuth";
+import { useTopic } from "../../hook/useTopic";
 
 type TopicCardProps = {
     topic: ITopic
@@ -18,6 +19,9 @@ function TopicCard({
 
     //USER
     const { user } = useAuth();
+
+    //TOPIC
+    const { topics, setTopics } = useTopic();
 
     //STATES - CONTROL
     const [messageError, setMessageError] = useState('');
@@ -44,7 +48,7 @@ function TopicCard({
         createComment(commentForm)
             .then(result => {
                 setComment(result.data);
-                setTotalComments(totalComments+1);
+                setTotalComments(totalComments + 1);
 
                 setComments([...comments, result.data]);
 
@@ -61,14 +65,69 @@ function TopicCard({
     }
 
     //REPOSTS
+    const [topicReposted, setTopicReposted] = useState<ITopic>();
+    const [reposters, setReposters] = useState<IUser[]>([]);
+    const handleClickRepost = () => {
+
+        //Preparar um Topic para ser enviado pro servidor
+        const repostForm: ITopic = {
+            owner: user,
+            repost: topic,
+            content: topic.content
+        }
+
+        //Chamar a service que manda o topic para servidor
+        createTopic(repostForm)
+            .then(result => {
+                setReposters([...reposters, result.data.owner])
+
+                setTopics([result.data, ...topics])
+
+                setMessageSuccess('Tópico repostado com sucesso!');
+                setTimeout(() => {
+                    setMessageSuccess('');
+                }, 5000);
+            })
+            .catch(error => {
+                setMessageError(error.message)
+            });
+    }
+
+
 
     //LIKES
+    const [totalLikes, setTotalLikes] = useState(0)
+    const [likers, setLikers] = useState<IUser[]>([]);
+    const handleClickLike = () => {
+
+        //Preparar um Topic para ser enviado pro servidor
+        const likeForm: ILike = {
+            user: user,
+            topic: topic
+            
+        }
+        // createTopic(likeForm)
+        // .then(result => {
+        //     setLikers([...likers, result.data.owner])
+
+        //     setTopics([result.data, ...topics])
+
+        //     setMessageSuccess('Tópico repostado com sucesso!');
+        //     setTimeout(() => {
+        //         setMessageSuccess('');
+        //     }, 5000);
+        // })
+        // .catch(error => {
+        //     setMessageError(error.message)
+        // });
+    }
+
 
     //EFFECT
     useEffect(() => {
 
-        //TO-DO: Comments
-        getCommentsByTopic( topic )
+
+        getCommentsByTopic(topic)
             .then(result => {
                 const dados: IComment[] = result.data;
                 setComments(dados);
@@ -85,30 +144,65 @@ function TopicCard({
             });
 
         //TO-DO: Reposts
+        if (topic.topic_id) {
+            getTopicById(topic.topic_id)
+                .then(result => {
+                    setTopicReposted(result.data)
+                })
+                .catch(error => {
+                    setMessageError(error.message);
+                });
+        }
 
+ 
+            //To do likes
+            getLikesByTopic(topic)
+            .then(result => {
+                const dados: ILike[] = result.data;
+                setLikers(dados);
+                setTotalLikes(dados.length);
 
-        //TO-DO: Likes
+                //Verifico se o usuário comentou este topic
+                const found = dados.find(item => (item.user?.id == user?.id));
+                if (found) {
+                    setLikers(found);
+                }
+            })
+            .catch(error => {
+                setMessageError(error.message);
+            });
+
 
     }, []);
 
     return (
         <div id="topic-card">
-            <TopicCardHeader 
+            <TopicCardHeader
                 createdAt={topic.createdAt}
                 owner={topic.owner}
-             />
+            />
 
-            <TopicCardBody 
-                content={topic.content} />
+            <TopicCardBody
+                topicReposted={topicReposted}
+                content={topic.content}
+                
+                />
 
-            <TopicCardActions 
+            <TopicCardActions
                 commented={Boolean(comment.user)}
                 totalComments={totalComments}
-                clickComment={handleClickComment} />
+                clickComment={handleClickComment}
+
+                reposters={reposters}
+                clickRepost={handleClickRepost}
+                
+                likers={likers}
+                clickLike={handleClickLike}
+                />
 
             {showComments && (
-                <TopicComment 
-                    comments={ comments }
+                <TopicComment
+                    comments={comments}
                     postComment={postComment} />
             )}
 

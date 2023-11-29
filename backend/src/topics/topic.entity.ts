@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, UpdateDateColumn, VirtualColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, UpdateDateColumn, VirtualColumn, TreeParent, Tree } from "typeorm";
 import { User } from "../users/user.entity";
 
+@Tree('materialized-path')
 @Entity()
 export class Topic {
 
@@ -16,6 +17,13 @@ export class Topic {
     @ManyToOne(() => User, { eager: true, nullable: false })
     @JoinColumn({ name: 'user_id' })
     owner: User;
+
+    @TreeParent()
+    @JoinColumn({ name: 'topic_id' })
+    repost: Topic;
+
+    @Column({ name: 'topic_id', nullable: true })
+    topic_id: number;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

@@ -2,13 +2,10 @@ import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToOne, Pri
 import { User } from "../users/user.entity";
 import { Topic } from "src/topics/topic.entity";
 
-@Entity('topic_user_comment')
-export class Comment {
+@Entity('topic_user_like')
+export class Like {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @Column({nullable: false, length: 250})
-    content: string; //nao precisa pro like remover essa coluna
 
     @ManyToOne(() => User, {eager: true, nullable: false})
     @JoinColumn({name: 'user_id'})
